@@ -255,14 +255,15 @@ function stepRally(state: GameState, in0: InputState, in1: InputState, events: S
   stepPlayer(p1, in1, DT);
 
   const s = state.shuttle;
+  const prevX = s.x;
   integrateShuttle(s, DT);
 
   // Hit tests before net/floor so a low save near the net still connects.
   // Only one racket may connect per tick (they defend opposite sides).
   if (!tryHit(p0, state, in0, events)) tryHit(p1, state, in1, events);
 
-  // Net.
-  const net = collideNet(s);
+  // Net (swept against prevX so fast shots can't tunnel through).
+  const net = collideNet(s, prevX);
   if (net.hit) {
     events.push({ type: 'netTouch', x: s.x, y: s.y });
   }

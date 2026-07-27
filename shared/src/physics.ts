@@ -2,7 +2,6 @@
 // geometry of the court. `simulation.ts` orchestrates these and applies rules.
 
 import {
-  DT,
   DIVE_DURATION,
   DIVE_SPEED,
   DRAG_K,
@@ -149,29 +148,29 @@ export interface NetCollision {
 }
 
 /**
- * Collide the shuttle with the solid net band. If the shuttle crosses the net
- * line below the net top, it is deflected: horizontal motion is killed and it
- * is nudged back to the side it came from so it drops into that half.
+ * Collide the shuttle with the solid net band. Uses a swept test against the
+ * previous x so a fast flat shot can't tunnel through the net in one tick: if it
+ * either sits within the band or crossed the net line this tick while below the
+ * net top, it is deflected — horizontal motion killed and nudged back to the
+ * side it came from so it drops into that half.
  */
-export function collideNet(s: ShuttleState): NetCollision {
+export function collideNet(s: ShuttleState, prevX: number): NetCollision {
   if (s.dead) return { hit: false, fromSide: 0 };
 
-  const withinBandX = Math.abs(s.x - CENTER_X) <= NET_HALF_THICKNESS + s.vx * DT * 0 + 6;
+  const band = NET_HALF_THICKNESS + 6;
+  const withinBandX = Math.abs(s.x - CENTER_X) <= band;
+  const crossed = (prevX - CENTER_X) * (s.x - CENTER_X) < 0;
   const belowTop = s.y >= NET_TOP_Y;
 
-  if (withinBandX && belowTop) {
-    const fromSide = s.vx >= 0 ? -1 : 1; // moving right ⇒ came from left
-    // Deflect: settle against the net on the incoming side.
-    s.x = CENTER_X + fromSide * (NET_HALF_THICKNESS + 6);
-    s.vx = fromSide * 40; // small nudge into the hitter's half
+  if ((withinBandX || crossed) && belowTop) {
+    // Incoming side: for a crossing it's where prevX was; otherwise infer from
+    // horizontal velocity (moving right ⇒ came from the left).
+    const side = crossed ? (prevX < CENTER_X ? -1 : 1) : s.vx >= 0 ? -1 : 1;
+    s.x = CENTER_X + side * band;
+    s.vx = side * 40; // small nudge into the hitter's half
     if (s.vy < 0) s.vy = 0; // kill any remaining lift
     s.netted = true;
-    return { hit: true, fromSide };
+    return { hit: true, fromSide: side };
   }
   return { hit: false, fromSide: 0 };
-}
-
-/** Constrain shuttle horizontal position never to teleport through the net. */
-export function shuttlePastNet(prevX: number, s: ShuttleState): boolean {
-  return (prevX - CENTER_X) * (s.x - CENTER_X) < 0;
 }
