@@ -41,6 +41,23 @@ npm start
 `npm start` launches a single Node process that serves the built client and the
 WebSocket endpoint on one port (default `8080`, override with `PORT`).
 
+## Deploy
+
+The server is a single long-running Node process that binds one port and serves
+both the static client and a persistent WebSocket. Deploy it to any host that
+can run a **long-lived Node 20+ process with raw WebSocket support** — a VPS, or
+a platform like Render / Railway / Fly.io / a container host:
+
+```bash
+npm ci && npm run build && PORT=8080 npm start
+```
+
+> **Not supported:** cPanel / Passenger-style shared hosting. Passenger proxies
+> HTTP request/response and does not keep a custom WebSocket server alive on a
+> port, so the authoritative 60 Hz match loop cannot run there. Single-player and
+> local modes are pure client-side and would work as static files, but online
+> multiplayer needs the Node server above.
+
 ## Controls
 
 | Action | Player 1 / You | Player 2 |
