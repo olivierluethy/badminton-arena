@@ -11,3 +11,4 @@ export * from './physics.js';
 export * from './rules.js';
 export * from './simulation.js';
 export * from './bot.js';
+export * from './protocol.js';
