@@ -1,0 +1,80 @@
+/* Design tokens — the CSS mirror of docs/STYLEGUIDE.md. Single source for the
+   HTML UI shell. Canvas colours live in client/src/render/palette.ts. */
+
+:root {
+  /* Environment / court */
+  --sky-top: #160e33;
+  --sky-bottom: #3a1e7a;
+  --floodlight: #fff4c2;
+  --court-in: #1e7fd6;
+  --court-out: #16a34a;
+  --court-line: #f5faff;
+
+  /* Players */
+  --kit-a: #ff5a3c;
+  --kit-a-dark: #c33a20;
+  --kit-a-glow: #ff8a5c;
+  --kit-b: #16d5c7;
+  --kit-b-dark: #0c8e86;
+  --kit-b-glow: #5cf0e4;
+
+  /* Shuttle */
+  --shuttle-cork: #ffd166;
+  --shuttle-trail: #ffe14d;
+
+  /* UI surfaces */
+  --bg: #120a2a;
+  --surface: #1c1140;
+  --surface-2: #271a56;
+  --surface-line: #3b2b72;
+  --led-panel: #0b0820;
+  --led-off: #2a2350;
+
+  /* Text */
+  --text: #f4f1ff;
+  --text-dim: #b7ace0;
+  --text-muted: #7c6fb0;
+
+  /* Accents */
+  --accent: #ffe14d;
+  --accent-2: #ff3d9a;
+  --success: #3ddc84;
+  --warning: #ffb020;
+  --danger: #ff2d55;
+
+  /* Spacing scale (4px base) */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 24px;
+  --space-2xl: 32px;
+  --space-3xl: 48px;
+  --space-4xl: 64px;
+  --space-5xl: 96px;
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-pill: 999px;
+
+  /* Shadows */
+  --shadow-panel: 0 12px 40px -12px rgba(8, 4, 24, 0.7);
+  --shadow-raised: 0 6px 18px -6px rgba(8, 4, 24, 0.6);
+  --shadow-glow-a: 0 0 24px rgba(255, 90, 60, 0.55);
+  --shadow-glow-b: 0 0 24px rgba(22, 213, 199, 0.55);
+  --shadow-glow-accent: 0 0 20px rgba(255, 225, 77, 0.5);
+
+  /* Type */
+  --font-display: 'Archivo', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'Space Mono', ui-monospace, monospace;
+
+  /* Motion */
+  --dur-fast: 120ms;
+  --dur-base: 200ms;
+  --dur-slow: 360ms;
+  --ease-pop: cubic-bezier(0.22, 1, 0.36, 1);
+}
