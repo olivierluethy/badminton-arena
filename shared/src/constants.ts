@@ -64,6 +64,7 @@ export const RACKET_CENTER_Y_OFFSET = 96; // racket centre height above feet
 export const RACKET_HIT_RADIUS = 50; // contact radius around racket centre
 export const RACKET_ARC_SPAN = 78; // vertical span mapping contact → shot type
 export const HIT_COOLDOWN = 0.12; // seconds after a hit before same shuttle re-contacts
+export const SWING_DURATION = 0.22; // seconds the swing/smash pose plays
 
 // Outgoing shot speeds
 export const SWING_SPEED = 1360; // normal stroke
