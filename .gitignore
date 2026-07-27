@@ -1,5 +1,7 @@
 node_modules/
 dist/
+dist-tsc/
+*.tsbuildinfo
 *.local
 .DS_Store
 *.log
