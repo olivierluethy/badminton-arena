@@ -20,6 +20,7 @@ export type InputFn = (state: GameState, out0: InputState, out1: InputState) => 
 
 export interface MatchHooks {
   onMatchOver?: (winner: PlayerId) => void;
+  onFrame?: (state: GameState) => void;
   banners?: BannerSink;
 }
 
@@ -99,5 +100,6 @@ export class MatchController {
 
   private render(alpha: number, dt: number): void {
     this.renderer.render(this.prev, this.state, this.paused ? 0 : alpha, dt);
+    this.hooks.onFrame?.(this.state);
   }
 }
