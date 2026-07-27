@@ -2,14 +2,22 @@
 // draws: sky → crowd → court → shadows → net → players → shuttle → effects.
 // The HUD, banners and menus are DOM overlays (see ui/), not canvas.
 
-import { FLOOR_Y, PLAYER_HALF_WIDTH, WORLD_HEIGHT, WORLD_WIDTH } from '@badminton/shared';
+import {
+  FLOOR_Y,
+  LEFT_BASELINE,
+  PLAYER_HALF_WIDTH,
+  PLAYER_HEIGHT,
+  RIGHT_BASELINE,
+  WORLD_HEIGHT,
+  WORLD_WIDTH,
+} from '@badminton/shared';
 import type { GameState, PlayerState } from '@badminton/shared';
 import { beginWorldTransform, type Viewport } from './viewport.js';
 import { drawCourtBackground, drawNet } from './court.js';
 import { FigureRenderer } from './figure.js';
 import { drawGroundShadow, drawShuttle, drawShuttleTrail, type TrailPoint } from './shuttle.js';
 import { Effects } from './effects.js';
-import { ENV, kitFor } from './palette.js';
+import { ENV, UI, kitFor, rgba } from './palette.js';
 
 function lerp(a: number, b: number, t: number): number {
   return a + (b - a) * t;
@@ -26,6 +34,7 @@ function interpFeet(prev: PlayerState, cur: PlayerState, t: number): { x: number
 export class Renderer {
   private figures = new FigureRenderer();
   private trailBuf: TrailPoint[] = [];
+  private clock = 0;
 
   constructor(
     private vp: Viewport,
@@ -34,6 +43,7 @@ export class Renderer {
 
   render(prev: GameState, cur: GameState, alpha: number, frameDt: number): void {
     const { ctx } = this.vp;
+    this.clock += frameDt;
 
     // Clear to letterbox colour (full device rect).
     ctx.setTransform(this.vp.dpr, 0, 0, this.vp.dpr, 0, 0);
@@ -83,9 +93,61 @@ export class Renderer {
       drawShuttle(ctx, sx, sy, sd.vx, sd.vy);
     }
 
+    // Serve-ready indicator above the serving player.
+    if (cur.phase === 'serve') {
+      const server = cur.players[cur.match.server];
+      const f = interpFeet(prev.players[cur.match.server], server, alpha);
+      this.drawServeIndicator(ctx, f.x, f.y, server.id);
+    }
+
+    // Out-of-bounds marker where a rally ended long.
+    if (
+      (cur.phase === 'pointScored' || cur.phase === 'gameOver' || cur.phase === 'matchOver') &&
+      cur.shuttle.dead &&
+      (cur.shuttle.x < LEFT_BASELINE || cur.shuttle.x > RIGHT_BASELINE)
+    ) {
+      this.drawOutMarker(ctx, cur.shuttle.x);
+    }
+
     // Juice.
     this.effects.draw(ctx);
 
+    ctx.restore();
+  }
+
+  private drawServeIndicator(ctx: CanvasRenderingContext2D, x: number, feetY: number, id: number): void {
+    const kit = kitFor(id);
+    const bob = Math.sin(this.clock * 5) * 5;
+    const y = feetY - PLAYER_HEIGHT - 26 + bob;
+    ctx.save();
+    ctx.fillStyle = kit.kit;
+    ctx.shadowColor = kit.glow;
+    ctx.shadowBlur = 12;
+    ctx.beginPath();
+    ctx.moveTo(x - 11, y);
+    ctx.lineTo(x + 11, y);
+    ctx.lineTo(x, y + 13);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+
+  private drawOutMarker(ctx: CanvasRenderingContext2D, x: number): void {
+    const cx = Math.max(LEFT_BASELINE - 18, Math.min(RIGHT_BASELINE + 18, x));
+    const y = FLOOR_Y - 10;
+    const pulse = 0.6 + 0.4 * Math.sin(this.clock * 8);
+    ctx.save();
+    ctx.strokeStyle = rgba(UI.danger, pulse);
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(cx, y, 15, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cx - 8, y - 8);
+    ctx.lineTo(cx + 8, y + 8);
+    ctx.moveTo(cx + 8, y - 8);
+    ctx.lineTo(cx - 8, y + 8);
+    ctx.stroke();
     ctx.restore();
   }
 }
