@@ -33,6 +33,10 @@ export function decodeInput(mask: number, out: InputState): InputState {
 export interface HelloMsg {
   t: 'hello';
   v: number;
+  /** Persisted client id for reconnecting to an in-progress match. */
+  reconnectId?: string;
+  /** Room code to rejoin, paired with reconnectId. */
+  reconnectRoom?: string;
 }
 export interface QueueMsg {
   t: 'queue';
@@ -100,6 +104,7 @@ export interface MatchStartMsg {
   config: MatchConfig;
   names: [string, string];
   serverTick: number;
+  code: string; // room code (for reconnect)
 }
 export interface SnapshotMsg {
   t: 'snapshot';
