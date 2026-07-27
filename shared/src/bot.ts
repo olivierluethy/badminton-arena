@@ -101,10 +101,6 @@ export class BotBrain {
     this.serveDelay = 0.5 + this.rng() * 0.8;
   }
 
-  private side(state: GameState): Side {
-    return state.players[this.botId].side;
-  }
-
   private readyX(side: Side): number {
     return side === 'left' ? CENTER_X - 230 : CENTER_X + 230;
   }
@@ -166,7 +162,7 @@ export class BotBrain {
     this.moveToward(me.x, target, out, 10);
 
     // Interception: jump / smash / dive decisions.
-    this.strikeLogic(state, me.x, me.y, me.onGround, s, side, approaching, out);
+    this.strikeLogic(me.x, me.y, me.onGround, s, side, approaching, out);
 
     this.prevJump = out.jump;
     this.prevSmash = out.smash;
@@ -200,7 +196,6 @@ export class BotBrain {
   }
 
   private strikeLogic(
-    state: GameState,
     bx: number,
     by: number,
     onGround: boolean,
