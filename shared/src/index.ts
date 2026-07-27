@@ -6,6 +6,7 @@ export const SHARED_VERSION = '1.0.0';
 export * from './math.js';
 export * from './constants.js';
 export * from './types.js';
+export * from './state.js';
 export * from './physics.js';
 export * from './rules.js';
 export * from './simulation.js';
