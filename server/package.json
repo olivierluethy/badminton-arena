@@ -1,0 +1,21 @@
+{
+  "name": "@badminton/server",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc -b",
+    "start": "node dist/index.js",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@badminton/shared": "*",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.9",
+    "@types/ws": "^8.5.13",
+    "tsx": "^4.19.2"
+  }
+}
